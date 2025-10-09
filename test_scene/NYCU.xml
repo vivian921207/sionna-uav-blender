@@ -1,0 +1,192 @@
+<scene version="2.1.0">
+
+<!-- Defaults, these can be set via the command line: -Darg=value -->
+
+
+<!-- Camera and Rendering Parameters -->
+
+	<integrator type="path" id="elm__0" name="elm__0">
+		<integer name="max_depth" value="12"/>
+	</integrator>
+
+<!-- Materials -->
+
+	<bsdf type="twosided" id="mat-itu_concrete" name="mat-itu_concrete">
+		<bsdf type="diffuse" name="bsdf">
+			<rgb value="0.388308 0.388308 0.388308" name="reflectance"/>
+		</bsdf>
+	</bsdf>
+	<bsdf type="diffuse" id="mat-itu_marble" name="mat-itu_marble">
+		<rgb value="1.000000 0.500000 0.200000" name="reflectance"/>
+	</bsdf>
+	<bsdf type="diffuse" id="mat-itu_metal" name="mat-itu_metal">
+		<rgb value="0.290000 0.250000 0.210000" name="reflectance"/>
+	</bsdf>
+
+<!-- Emitters -->
+
+	<emitter type="constant" id="World" name="World">
+		<rgb value="1.000000 1.000000 1.000000" name="radiance"/>
+	</emitter>
+
+<!-- Shapes -->
+
+	<shape type="ply" id="mesh-Plane" name="mesh-Plane">
+		<string name="filename" value="meshes/Plane.ply"/>
+		<boolean name="face_normals" value="true"/>
+		<ref id="mat-itu_concrete" name="bsdf"/>
+	</shape>
+	<shape type="ply" id="mesh-科學一館-itu_marble" name="mesh-科學一館-itu_marble">
+		<string name="filename" value="meshes/科學一館-itu_marble.ply"/>
+		<boolean name="face_normals" value="true"/>
+		<ref id="mat-itu_marble" name="bsdf"/>
+	</shape>
+	<shape type="ply" id="mesh-科學一館-itu_metal" name="mesh-科學一館-itu_metal">
+		<string name="filename" value="meshes/科學一館-itu_metal.ply"/>
+		<boolean name="face_normals" value="true"/>
+		<ref id="mat-itu_metal" name="bsdf"/>
+	</shape>
+	<shape type="ply" id="mesh-中正堂-itu_marble" name="mesh-中正堂-itu_marble">
+		<string name="filename" value="meshes/中正堂-itu_marble.ply"/>
+		<boolean name="face_normals" value="true"/>
+		<ref id="mat-itu_marble" name="bsdf"/>
+	</shape>
+	<shape type="ply" id="mesh-中正堂-itu_metal" name="mesh-中正堂-itu_metal">
+		<string name="filename" value="meshes/中正堂-itu_metal.ply"/>
+		<boolean name="face_normals" value="true"/>
+		<ref id="mat-itu_metal" name="bsdf"/>
+	</shape>
+	<shape type="ply" id="mesh-工程三館-itu_marble" name="mesh-工程三館-itu_marble">
+		<string name="filename" value="meshes/工程三館-itu_marble.ply"/>
+		<boolean name="face_normals" value="true"/>
+		<ref id="mat-itu_marble" name="bsdf"/>
+	</shape>
+	<shape type="ply" id="mesh-工程三館-itu_metal" name="mesh-工程三館-itu_metal">
+		<string name="filename" value="meshes/工程三館-itu_metal.ply"/>
+		<boolean name="face_normals" value="true"/>
+		<ref id="mat-itu_metal" name="bsdf"/>
+	</shape>
+	<shape type="ply" id="mesh-工程四館-itu_marble" name="mesh-工程四館-itu_marble">
+		<string name="filename" value="meshes/工程四館-itu_marble.ply"/>
+		<boolean name="face_normals" value="true"/>
+		<ref id="mat-itu_marble" name="bsdf"/>
+	</shape>
+	<shape type="ply" id="mesh-工程四館-itu_metal" name="mesh-工程四館-itu_metal">
+		<string name="filename" value="meshes/工程四館-itu_metal.ply"/>
+		<boolean name="face_normals" value="true"/>
+		<ref id="mat-itu_metal" name="bsdf"/>
+	</shape>
+	<shape type="ply" id="mesh-管理二館-itu_marble" name="mesh-管理二館-itu_marble">
+		<string name="filename" value="meshes/管理二館-itu_marble.ply"/>
+		<boolean name="face_normals" value="true"/>
+		<ref id="mat-itu_marble" name="bsdf"/>
+	</shape>
+	<shape type="ply" id="mesh-管理二館-itu_metal" name="mesh-管理二館-itu_metal">
+		<string name="filename" value="meshes/管理二館-itu_metal.ply"/>
+		<boolean name="face_normals" value="true"/>
+		<ref id="mat-itu_metal" name="bsdf"/>
+	</shape>
+	<shape type="ply" id="mesh-工程六館-itu_marble" name="mesh-工程六館-itu_marble">
+		<string name="filename" value="meshes/工程六館-itu_marble.ply"/>
+		<boolean name="face_normals" value="true"/>
+		<ref id="mat-itu_marble" name="bsdf"/>
+	</shape>
+	<shape type="ply" id="mesh-工程六館-itu_metal" name="mesh-工程六館-itu_metal">
+		<string name="filename" value="meshes/工程六館-itu_metal.ply"/>
+		<boolean name="face_normals" value="true"/>
+		<ref id="mat-itu_metal" name="bsdf"/>
+	</shape>
+	<shape type="ply" id="mesh-浩然圖書資訊中心-itu_marble" name="mesh-浩然圖書資訊中心-itu_marble">
+		<string name="filename" value="meshes/浩然圖書資訊中心-itu_marble.ply"/>
+		<boolean name="face_normals" value="true"/>
+		<ref id="mat-itu_marble" name="bsdf"/>
+	</shape>
+	<shape type="ply" id="mesh-浩然圖書資訊中心-itu_metal" name="mesh-浩然圖書資訊中心-itu_metal">
+		<string name="filename" value="meshes/浩然圖書資訊中心-itu_metal.ply"/>
+		<boolean name="face_normals" value="true"/>
+		<ref id="mat-itu_metal" name="bsdf"/>
+	</shape>
+	<shape type="ply" id="mesh-工程五館-itu_marble" name="mesh-工程五館-itu_marble">
+		<string name="filename" value="meshes/工程五館-itu_marble.ply"/>
+		<boolean name="face_normals" value="true"/>
+		<ref id="mat-itu_marble" name="bsdf"/>
+	</shape>
+	<shape type="ply" id="mesh-工程五館-itu_metal" name="mesh-工程五館-itu_metal">
+		<string name="filename" value="meshes/工程五館-itu_metal.ply"/>
+		<boolean name="face_normals" value="true"/>
+		<ref id="mat-itu_metal" name="bsdf"/>
+	</shape>
+	<shape type="ply" id="mesh-交映樓-itu_marble" name="mesh-交映樓-itu_marble">
+		<string name="filename" value="meshes/交映樓-itu_marble.ply"/>
+		<boolean name="face_normals" value="true"/>
+		<ref id="mat-itu_marble" name="bsdf"/>
+	</shape>
+	<shape type="ply" id="mesh-交映樓-itu_metal" name="mesh-交映樓-itu_metal">
+		<string name="filename" value="meshes/交映樓-itu_metal.ply"/>
+		<boolean name="face_normals" value="true"/>
+		<ref id="mat-itu_metal" name="bsdf"/>
+	</shape>
+	<shape type="ply" id="mesh-田家炳光電大樓-itu_marble" name="mesh-田家炳光電大樓-itu_marble">
+		<string name="filename" value="meshes/田家炳光電大樓-itu_marble.ply"/>
+		<boolean name="face_normals" value="true"/>
+		<ref id="mat-itu_marble" name="bsdf"/>
+	</shape>
+	<shape type="ply" id="mesh-田家炳光電大樓-itu_metal" name="mesh-田家炳光電大樓-itu_metal">
+		<string name="filename" value="meshes/田家炳光電大樓-itu_metal.ply"/>
+		<boolean name="face_normals" value="true"/>
+		<ref id="mat-itu_metal" name="bsdf"/>
+	</shape>
+	<shape type="ply" id="mesh-資訊技術服務中心-itu_marble" name="mesh-資訊技術服務中心-itu_marble">
+		<string name="filename" value="meshes/資訊技術服務中心-itu_marble.ply"/>
+		<boolean name="face_normals" value="true"/>
+		<ref id="mat-itu_marble" name="bsdf"/>
+	</shape>
+	<shape type="ply" id="mesh-資訊技術服務中心-itu_metal" name="mesh-資訊技術服務中心-itu_metal">
+		<string name="filename" value="meshes/資訊技術服務中心-itu_metal.ply"/>
+		<boolean name="face_normals" value="true"/>
+		<ref id="mat-itu_metal" name="bsdf"/>
+	</shape>
+	<shape type="ply" id="mesh-element-itu_marble" name="mesh-element-itu_marble">
+		<string name="filename" value="meshes/element-itu_marble.ply"/>
+		<boolean name="face_normals" value="true"/>
+		<ref id="mat-itu_marble" name="bsdf"/>
+	</shape>
+	<shape type="ply" id="mesh-element-itu_metal" name="mesh-element-itu_metal">
+		<string name="filename" value="meshes/element-itu_metal.ply"/>
+		<boolean name="face_normals" value="true"/>
+		<ref id="mat-itu_metal" name="bsdf"/>
+	</shape>
+	<shape type="ply" id="mesh-小木屋鬆餅-itu_marble" name="mesh-小木屋鬆餅-itu_marble">
+		<string name="filename" value="meshes/小木屋鬆餅-itu_marble.ply"/>
+		<boolean name="face_normals" value="true"/>
+		<ref id="mat-itu_marble" name="bsdf"/>
+	</shape>
+	<shape type="ply" id="mesh-小木屋鬆餅-itu_metal" name="mesh-小木屋鬆餅-itu_metal">
+		<string name="filename" value="meshes/小木屋鬆餅-itu_metal.ply"/>
+		<boolean name="face_normals" value="true"/>
+		<ref id="mat-itu_metal" name="bsdf"/>
+	</shape>
+	<shape type="ply" id="mesh-24k-itu_marble" name="mesh-24k-itu_marble">
+		<string name="filename" value="meshes/24k-itu_marble.ply"/>
+		<boolean name="face_normals" value="true"/>
+		<ref id="mat-itu_marble" name="bsdf"/>
+	</shape>
+	<shape type="ply" id="mesh-24k-itu_metal" name="mesh-24k-itu_metal">
+		<string name="filename" value="meshes/24k-itu_metal.ply"/>
+		<boolean name="face_normals" value="true"/>
+		<ref id="mat-itu_metal" name="bsdf"/>
+	</shape>
+	<shape type="ply" id="mesh-科學三館-itu_metal" name="mesh-科學三館-itu_metal">
+		<string name="filename" value="meshes/科學三館-itu_metal.ply"/>
+		<boolean name="face_normals" value="true"/>
+		<ref id="mat-itu_metal" name="bsdf"/>
+	</shape>
+	<shape type="ply" id="mesh-科學三館-itu_marble" name="mesh-科學三館-itu_marble">
+		<string name="filename" value="meshes/科學三館-itu_marble.ply"/>
+		<boolean name="face_normals" value="true"/>
+		<ref id="mat-itu_marble" name="bsdf"/>
+	</shape>
+
+<!-- Volumes -->
+
+</scene>

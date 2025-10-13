@@ -1,4 +1,3 @@
-# === region_loader.py ===
 import bpy, os
 
 class RegionLoader:
@@ -34,7 +33,10 @@ class RegionLoader:
         return col
 
     def create_instance(self, coll_name, instance_name=None, visible=True):
-        """建立 Collection Instance"""
+        """
+        為已載入的集合建立 Collection Instance。
+        若同名實例已存在，則重用它而不重新建立。
+        """
         if coll_name not in self.cache:
             raise KeyError(f"[RegionLoader] 尚未載入集合 {coll_name}")
 
@@ -42,13 +44,27 @@ class RegionLoader:
         if instance_name is None:
             instance_name = f"INST__{coll_name}"
 
+        # ✅ 若同名實例已存在，直接重用
+        exist = bpy.data.objects.get(instance_name)
+        if exist and exist.instance_collection == col:
+            if self.verbose:
+                print(f"[RegionLoader] 重用現有實例：{instance_name}")
+            self.set_visible(exist, visible)
+            self.cache[coll_name] = (col, exist)
+            return exist
+
+        # 若無現有實例才建立新的
         inst = bpy.data.objects.new(instance_name, None)
         inst.instance_type = 'COLLECTION'
         inst.instance_collection = col
         bpy.context.scene.collection.objects.link(inst)
         self.set_visible(inst, visible)
+
         self.cache[coll_name] = (col, inst)
+        if self.verbose:
+            print(f"[RegionLoader] 建立新實例：{instance_name}")
         return inst
+
 
     def set_visible(self, inst, visible=True):
         """設定實例是否顯示（viewport + render）。"""

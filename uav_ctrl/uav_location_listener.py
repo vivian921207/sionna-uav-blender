@@ -4,7 +4,7 @@ from mathutils import Vector
 
 # ==== 設定 ====
 JSON_PATH = "//uav_from_sionna.json"  # 可用 '//' 表示相對於 .blend 的路徑
-OBJECT_NAME = ""                 # 留空=用目前 Active 物件；或填物件名，如 "UAV"
+OBJECT_NAME = "root"              # 留空=用目前 Active 物件；或填物件名，如 "UAV"
 INTERVAL    = 0.01                # 每幾秒檢查一次
 USE_WORLD   = True               # True: 設定世界座標；False: 設定物件座標(location)
 
@@ -64,6 +64,32 @@ def _read_xyz(path):
     return float(x), float(y), float(z)
 
 
+def focus_on_object(obj_name):
+    obj = bpy.data.objects.get(obj_name)
+    if not obj:
+        print(f"[focus] 找不到物件 {obj_name}")
+        return
+
+    for window in bpy.context.window_manager.windows:
+        for area in window.screen.areas:
+            if area.type == 'VIEW_3D':
+                for region in area.regions:
+                    if region.type == 'WINDOW':
+                        for space in area.spaces:
+                            if space.type == 'VIEW_3D':
+                                override = {
+                                    'window': window,
+                                    'screen': window.screen,
+                                    'area': area,
+                                    'region': region,
+                                    'space_data': space,
+                                    'scene': bpy.context.scene,
+                                    'active_object': obj,
+                                }
+                                bpy.context.view_layer.objects.active = obj
+                                bpy.ops.view3d.view_selected(override)
+                                return
+
 
 def _set_location(obj, vec3):
     v = Vector(vec3)
@@ -93,6 +119,7 @@ def _timer():
     return INTERVAL
 
 def start_watch():
+    focus_on_object(OBJECT_NAME)
     if _state["running"]:
         print("[json-move] 已在監聽中。若要重啟請先呼叫 stop_watch()")
         return

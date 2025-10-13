@@ -1,4 +1,4 @@
-# region_loader.py
+# === region_loader.py ===
 import bpy, os
 
 class RegionLoader:
@@ -12,11 +12,9 @@ class RegionLoader:
         self.cache = {}  # {collection_name: (collection, instance)}
 
     def load_collection(self, blend_path, coll_name):
-        """
-        從指定的 .blend 載入 Collection。
-        回傳: bpy.types.Collection
-        """
-        blend = os.path.abspath(blend_path)
+        """從指定的 .blend 檔案載入 Collection"""
+        blend = bpy.path.abspath(blend_path)
+        blend = os.path.abspath(blend)
         if not os.path.exists(blend):
             raise FileNotFoundError(f"找不到 .blend 檔案：{blend}")
 
@@ -36,30 +34,19 @@ class RegionLoader:
         return col
 
     def create_instance(self, coll_name, instance_name=None, visible=True):
-        """
-        為已載入的集合建立 Collection Instance。
-        回傳: bpy.types.Object (instance)
-        """
+        """建立 Collection Instance"""
         if coll_name not in self.cache:
             raise KeyError(f"[RegionLoader] 尚未載入集合 {coll_name}")
 
-        col, inst = self.cache[coll_name]
+        col, _ = self.cache[coll_name]
         if instance_name is None:
             instance_name = f"INST__{coll_name}"
-
-        # 若已存在可用的 instance，直接重用
-        exist = bpy.data.objects.get(instance_name)
-        if exist and exist.instance_collection == col:
-            self.set_visible(exist, visible)
-            self.cache[coll_name] = (col, exist)
-            return exist
 
         inst = bpy.data.objects.new(instance_name, None)
         inst.instance_type = 'COLLECTION'
         inst.instance_collection = col
         bpy.context.scene.collection.objects.link(inst)
         self.set_visible(inst, visible)
-
         self.cache[coll_name] = (col, inst)
         return inst
 
@@ -69,11 +56,6 @@ class RegionLoader:
             return
         inst.hide_viewport = not visible
         inst.hide_render = not visible
-
-    def switch(self, inst_from, inst_to):
-        """在兩個實例之間瞬間切換。"""
-        self.set_visible(inst_from, False)
-        self.set_visible(inst_to, True)
 
     def unload(self, coll_name):
         """移除指定集合與其實例（若存在）。"""

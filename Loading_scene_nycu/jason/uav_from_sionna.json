@@ -1,7 +1,8 @@
 {
   "version": 1,
   "regions": {
-    "A": "show"
+    "A": "show",
+    "B": "hide"
   },
   "remove_unlisted": true
 }

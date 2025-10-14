@@ -1,98 +1,100 @@
 # === JSON 監聽並自動載入對應 .blend (Blender 3.x/4.x) ===
-import bpy, json, os, time
-from region_loader import RegionLoader   # 需確認 region_loader.py 可用
+import bpy, os, sys, importlib
 
-# ==== 設定 ====
-JSON_PATH = r"E:\NYCU\topic2\uav_from_sionna.json"
-INTERVAL = 1.0  # 每幾秒檢查一次
+# === 自動加入 scripts 資料夾到搜尋路徑 ===
+scripts_dir = os.path.join(os.path.dirname(os.path.dirname(bpy.data.filepath)), "scripts")
+if scripts_dir not in sys.path:
+    sys.path.append(scripts_dir)
 
-# 對應表：JSON 的 "region" -> 對應 .blend 與集合名
+# === 清除內嵌 region_loader ===
+if "region_loader" in bpy.data.texts:
+    print("[safe import] 發現內嵌 region_loader Text，正在刪除...")
+    bpy.data.texts.remove(bpy.data.texts["region_loader"])
+if "json_watcher" in bpy.data.texts:
+    print("[safe import] 發現內嵌 region_loader Text，正在刪除...")
+    bpy.data.texts.remove(bpy.data.texts["json_watcher"])
+# === 匯入必要模組 ===
+import region_loader
+import json_watcher
+importlib.reload(region_loader)
+importlib.reload(json_watcher)
+from region_loader import RegionLoader
+from json_watcher import JSONWatcher
+
+
+# === 設定 ===
+JSON_PATH = "//../jason/uav_from_sionna.json"  # 相對於 .blend
+INTERVAL = 1.0
+
 REGION_MAP = {
-    "A": {
-        "blend": r"E:\NYCU\topic2\test_to_blend\1.blend",
-        "coll": "RegionRoot"
-    },
-    "B": {
-        "blend": r"E:\NYCU\topic2\test_to_blend\2.blend",
-        "coll": "RegionRoot2"
-    }
+    "A": {"blend": "//nycu0.blend", "coll": "RegionRoot1", "pos": (0.0, 0.0, 0.0)},
+    "B": {"blend": "//nycu1.blend", "coll": "RegionRoot2", "pos": (1100.0, 0.0, 0.0)},
+    "C": {"blend": "//nycu2.blend", "coll": "RegionRoot3", "pos": (-900.0, 0.0, 0.0)},
 }
 
-# ==== 狀態 ====
-_state = {
-    "running": False,
-    "last_mtime": 0.0,
-    "cur_region": None,
-    "inst_cur": None,
-}
+# === 狀態 ===
+loader = RegionLoader(verbose=True)
+current_state = {}
 
-_loader = RegionLoader(verbose=True)
 
-# ==== 讀取 JSON 的 region ====
-def _read_region(path):
-    with open(path, "r", encoding="utf-8") as f:
-        data = json.load(f)
-    if not isinstance(data, dict) or "region" not in data:
-        return None
-    return str(data["region"]).strip().upper()
-
-# ==== 主定時器 ====
-def _timer():
-    if not _state["running"]:
-        return None
-
-    path = bpy.path.abspath(JSON_PATH)
-    if not os.path.exists(path):
-        return INTERVAL
-
-    m = os.path.getmtime(path)
-    if m <= _state["last_mtime"]:
-        return INTERVAL
-    _state["last_mtime"] = m
-
-    try:
-        region = _read_region(path)
-        if region not in REGION_MAP:
-            print(f"[watch] 無效區域 '{region}'，請確認 JSON。")
-            return INTERVAL
-
-        # 若區域變更
-        if region != _state["cur_region"]:
-            info = REGION_MAP[region]
-            print(f"[watch] 切換至區域 {region}")
-
-            # 載入新模型
-            col = _loader.load_collection(info["blend"], info["coll"])
-            inst = _loader.create_instance(info["coll"], f"REGION_{region}_INST", visible=True)
-
-            # 隱藏舊模型
-            if _state["inst_cur"]:
-                _loader.set_visible(_state["inst_cur"], False)
-
-            # 更新狀態
-            _state["cur_region"] = region
-            _state["inst_cur"] = inst
-        else:
-            print(f"[watch] 區域未變 ({region})")
-
-    except Exception as e:
-        print("[watch] 錯誤：", e)
-
-    return INTERVAL
-
-# ==== 控制函數 ====
-def start_watch():
-    if _state["running"]:
-        print("[watch] 已在監聽中。")
+# === JSON 回調函式 ===
+def on_json_update(data):
+    """當 JSON 更新時執行的邏輯"""
+    if not isinstance(data, dict) or "regions" not in data:
+        print("[watch] JSON 結構錯誤，缺少 'regions'")
         return
-    _state["running"] = True
-    _state["last_mtime"] = 0.0
-    bpy.app.timers.register(_timer, first_interval=0.2)
-    print(f"[watch] 開始監聽 {bpy.path.abspath(JSON_PATH)}")
 
-def stop_watch():
-    _state["running"] = False
-    print("[watch] 停止監聽。")
+    regions = data["regions"]
+    remove_unlisted = data.get("remove_unlisted", False)
 
-# 自動啟動
-start_watch()
+    for region, action in regions.items():
+        region = region.strip().upper()
+        if region not in REGION_MAP:
+            print(f"[watch] 未知區域 '{region}'，跳過。")
+            continue
+
+        info = REGION_MAP[region]
+        blend_path = bpy.path.abspath(info["blend"])
+        coll_name = info["coll"]
+        pos = info.get("pos", (0.0, 0.0, 0.0))
+
+        inst_name = f"REGION_{region}_INST"
+        inst = bpy.data.objects.get(inst_name)
+        col = bpy.data.collections.get(coll_name)
+        action = str(action).lower().strip()
+
+        if action == "show" or action == "hide":
+    # 若尚未載入，先載入
+            if not col:
+                print(f"[watch] 載入 {region}（初始狀態: {action}）")
+                try:
+                    col = loader.load_collection(blend_path, coll_name)
+                    inst = loader.create_instance(coll_name, inst_name, visible=(action == "show"))
+                    inst.location = pos
+                except Exception as e:
+                    print(f"[watch] 無法載入 {region}: {e}")
+                    continue
+            else:
+                # 已存在 → 僅切換可見性
+                loader.set_visible(inst, (action == "show"))
+                print(f"[watch] { '顯示' if action == 'show' else '隱藏' } 區域 {region}")
+
+
+    # 移除未列出的區域
+    if remove_unlisted:
+        listed = set(k.strip().upper() for k in regions.keys())
+        for key, info in REGION_MAP.items():
+            if key not in listed:
+                coll_name = info["coll"]
+                if coll_name in bpy.data.collections:
+                    print(f"[watch] 移除未列出區域 {key}")
+                    try:
+                        loader.unload(coll_name)
+                    except Exception as e:
+                        print(f"[watch] 無法移除 {key}: {e}")
+
+
+# === 啟動監聽 ===
+watcher = JSONWatcher(json_path=JSON_PATH, interval=INTERVAL, verbose=True)
+watcher.add_callback(on_json_update)
+watcher.start()

@@ -1,0 +1,74 @@
+<scene version="2.1.0">
+
+<!-- Defaults, these can be set via the command line: -Darg=value -->
+
+
+<!-- Camera and Rendering Parameters -->
+
+	<integrator type="path" id="elm__0" name="elm__0">
+		<integer name="max_depth" value="12"/>
+	</integrator>
+
+<!-- Materials -->
+
+	<bsdf type="diffuse" id="mat-itu_marble" name="mat-itu_marble">
+		<rgb value="1.000000 0.500000 0.200000" name="reflectance"/>
+	</bsdf>
+	<bsdf type="diffuse" id="mat-itu_glass" name="mat-itu_glass">
+		<rgb value="0.290000 0.250000 0.210000" name="reflectance"/>
+	</bsdf>
+	<bsdf type="diffuse" id="mat-itu_wood" name="mat-itu_wood">
+		<rgb value="1.000000 0.647000 0.000000" name="reflectance"/>
+	</bsdf>
+	<bsdf type="diffuse" id="mat-itu_ceiling_board" name="mat-itu_ceiling_board">
+		<rgb value="0.647000 0.165000 0.165000" name="reflectance"/>
+	</bsdf>
+	<bsdf type="diffuse" id="mat-itu_metal" name="mat-itu_metal">
+		<rgb value="1.000000 0.714000 0.757000" name="reflectance"/>
+	</bsdf>
+	<bsdf type="diffuse" id="mat-itu_very_dry_ground" name="mat-itu_very_dry_ground">
+		<rgb value="1.000000 0.000000 0.300000" name="reflectance"/>
+	</bsdf>
+
+<!-- Emitters -->
+
+	<emitter type="constant" id="World" name="World">
+		<rgb value="1.000000 1.000000 1.000000" name="radiance"/>
+	</emitter>
+
+<!-- Shapes -->
+
+	<shape type="ply" id="mesh-map_9_osm_buildings-itu_marble" name="mesh-map_9_osm_buildings-itu_marble">
+		<string name="filename" value="meshes/map_9_osm_buildings-itu_marble.ply"/>
+		<boolean name="face_normals" value="true"/>
+		<ref id="mat-itu_marble" name="bsdf"/>
+	</shape>
+	<shape type="ply" id="mesh-map_9_osm_buildings-itu_glass" name="mesh-map_9_osm_buildings-itu_glass">
+		<string name="filename" value="meshes/map_9_osm_buildings-itu_glass.ply"/>
+		<boolean name="face_normals" value="true"/>
+		<ref id="mat-itu_glass" name="bsdf"/>
+	</shape>
+	<shape type="ply" id="mesh-map_9_osm_buildings-itu_wood" name="mesh-map_9_osm_buildings-itu_wood">
+		<string name="filename" value="meshes/map_9_osm_buildings-itu_wood.ply"/>
+		<boolean name="face_normals" value="true"/>
+		<ref id="mat-itu_wood" name="bsdf"/>
+	</shape>
+	<shape type="ply" id="mesh-map_9_osm_buildings-itu_ceiling_board" name="mesh-map_9_osm_buildings-itu_ceiling_board">
+		<string name="filename" value="meshes/map_9_osm_buildings-itu_ceiling_board.ply"/>
+		<boolean name="face_normals" value="true"/>
+		<ref id="mat-itu_ceiling_board" name="bsdf"/>
+	</shape>
+	<shape type="ply" id="mesh-map_9_osm_buildings-itu_metal" name="mesh-map_9_osm_buildings-itu_metal">
+		<string name="filename" value="meshes/map_9_osm_buildings-itu_metal.ply"/>
+		<boolean name="face_normals" value="true"/>
+		<ref id="mat-itu_metal" name="bsdf"/>
+	</shape>
+	<shape type="ply" id="mesh-plane" name="mesh-plane">
+		<string name="filename" value="meshes/plane.ply"/>
+		<boolean name="face_normals" value="true"/>
+		<ref id="mat-itu_very_dry_ground" name="bsdf"/>
+	</shape>
+
+<!-- Volumes -->
+
+</scene>

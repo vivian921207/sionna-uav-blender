@@ -1,4 +1,4 @@
-# === JSON 監聽並自動載入對應 .blend + UAV移動 (Blender 3.x/4.x) ===
+# === JSON 監聽並自動載入對應 .blend + 地圖移動模式 (Blender 3.x/4.x) ===
 import bpy, os, sys, importlib
 
 # === 自動加入 scripts 資料夾到搜尋路徑 ===
@@ -22,8 +22,9 @@ from json_watcher import JSONWatcher
 
 # === 設定 ===
 JSON_PATH = "//../jason/uav_from_sionna.json"  # 相對於 .blend
-INTERVAL = 0.1  # 檢查頻率（秒）
+INTERVAL = 0.05  # 檢查頻率（秒）
 
+# 每個 region 的初始位置（世界座標）
 REGION_MAP = {
     "A": {"blend": "//nycu0.blend", "coll": "RegionRoot1", "pos": (0.0, 0.0, 0.0)},
     "B": {"blend": "//nycu1.blend", "coll": "RegionRoot2", "pos": (1170.0, 0.0, 0.0)},
@@ -32,6 +33,7 @@ REGION_MAP = {
 
 # === 狀態 ===
 loader = RegionLoader(verbose=True)
+uav_fixed_pos = (0.0, 0.0, 200.0)  # UAV 固定位置
 
 
 # === 回調 1：控制區域載入/顯示/隱藏 ===
@@ -87,9 +89,9 @@ def on_region_update(data):
                         print(f"[region-watch] 無法移除 {key}: {e}")
 
 
-# === 回調 2：控制 UAV 移動 ===
+# === 回調 2：地圖反向移動（UAV 固定） ===
 def on_uav_update(data):
-    """依據 data['uav'] 控制 UAV 物體的位置"""
+    """依據 data['uav'] 控制地圖偏移，而非 UAV 物體"""
     if not isinstance(data, dict) or "uav" not in data:
         return
 
@@ -97,20 +99,28 @@ def on_uav_update(data):
     if not isinstance(uav, dict):
         return
 
+    # UAV 實際位置 (用來決定地圖偏移)
     x = float(uav.get("x", 0.0))
     y = float(uav.get("y", 0.0))
-    z = float(uav.get("z", 0.0))
+    z = float(uav.get("z", uav_fixed_pos[2]))
 
-    obj = bpy.data.objects.get("UAV")  # 物件名稱可自行更改
-    if obj is None:
-        print("[uav-watch] 找不到物件 'UAV'")
-        return
+    # UAV 固定在原點
+    uav_obj = bpy.data.objects.get("UAV")
+    if uav_obj:
+        uav_obj.location = (0.0, 0.0, z)
 
-    obj.location = (x, y, z)
-    print(f"[uav-watch] UAV → ({x:.2f}, {y:.2f}, {z:.2f})")
+    # 地圖以 UAV 位置的反方向偏移
+    for region, info in REGION_MAP.items():
+        inst_name = f"REGION_{region}_INST"
+        inst = bpy.data.objects.get(inst_name)
+        if inst:
+            base_pos = info.get("pos", (0.0, 0.0, 0.0))
+            inst.location.x = base_pos[0] - x  # ✨ 關鍵反向偏移
+            inst.location.y = base_pos[1] - y
+    print(f"[map-move] 偏移地圖 ← UAV({x:.2f}, {y:.2f}, {z:.2f})")
 
 
-# === 啟動單一 JSON 監聽，但綁兩個 callback ===
+# === 啟動監聽 ===
 def start_watch():
     watcher = JSONWatcher(json_path=JSON_PATH, interval=INTERVAL, verbose=True)
     watcher.add_callback(on_region_update)

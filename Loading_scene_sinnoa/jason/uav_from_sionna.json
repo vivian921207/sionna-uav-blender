@@ -2,11 +2,13 @@
   "version": 1,
   "regions": {
     "C": "show",
-    "A": "show"
+    "A": "show",
+    "B": "show"
   },
   "remove_unlisted": true,
   "uav": {
-    "x": -1125.0,
+    "region": "B",
+    "x": 90.0,
     "y": 0.0,
     "z": 150.0
   }

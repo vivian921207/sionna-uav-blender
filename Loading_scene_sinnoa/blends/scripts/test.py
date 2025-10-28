@@ -12,7 +12,7 @@ REGION_CENTERS = {
 
 # UAV 初始狀態
 uav = {"x": 0.0, "y": 0.0, "z": 150.0}
-vx = 100.0        # UAV 速度 (Blender 單位/秒)
+vx = 50.0        # UAV 速度 (Blender 單位/秒)
 dt = 0.05         # 更新間隔 (秒)
 direction = +1    # +1 表示往右，-1 表示往左
 

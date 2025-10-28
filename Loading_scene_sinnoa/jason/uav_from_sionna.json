@@ -3,12 +3,12 @@
   "regions": {
     "C": "show",
     "A": "show",
-    "B": "show"
+    "B": "hide"
   },
   "remove_unlisted": true,
   "uav": {
-    "region": "B",
-    "x": 90.0,
+    "region": "C",
+    "x": -702.5,
     "y": 0.0,
     "z": 150.0
   }
